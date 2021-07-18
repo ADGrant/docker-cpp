@@ -7,7 +7,6 @@ ENV AWS_SDK_CPP_VER_MINOR ${AWS_SDK_CPP_VER_MINOR:-3}
 ARG AWS_SDK_CPP_VER_PATCH
 ENV AWS_SDK_CPP_VER_PATCH ${AWS_SDK_CPP_VER_PATCH:-47}
 
-ENV AWS_SDK_CPP_VER "${AWS_SDK_CPP_VER_MAJOR}.${AWS_SDK_CPP_VER_MINOR}"
 ENV AWS_SDK_CPP_VERSION="1.8.160"
 
 ENV CMAKE_VER_MAJOR 3
@@ -52,6 +51,7 @@ ENV AWS_SDK_CPP_USEFUL_TOOLS \
 	apt-utils \
 	wget \
 	file \
+	tcsh \
 	unzip \
 	git
 
@@ -60,17 +60,26 @@ RUN apt-get update \
 	$AWS_SDK_CPP_BUILD_TOOLS \
 	$AWS_SDK_CPP_REQUIRED_LIBS \
 	$AWS_SDK_CPP_USEFUL_TOOLS \
-	--no-install-recommends \
-	&& mkdir -p /tmp/build && cd /tmp/build \
-	&& curl -sSL https://cmake.org/files/v${CMAKE_VER}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz > cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz \
+	--no-install-recommends 
+
+RUN mkdir -p /tmp/build && cd /tmp/build
+
+
+RUN curl -sSL https://cmake.org/files/v${CMAKE_VER}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz > cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz \
 	&& tar -v -zxf cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz \
 	&& rm -f cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz \
 	&& cd cmake-${CMAKE_VERSION}-Linux-x86_64 \
 	&& cp -rp bin/* /usr/local/bin/ \
 	&& cp -rp share/* /usr/local/share/ \
 	&& cd / && rm -rf /tmp/build \
-	&& mkdir -p /tmp/build/build && cd /tmp/build \
-	&& curl -sSL https://github.com/aws/aws-sdk-cpp/archive/${AWS_SDK_CPP_VERSION}.zip > aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
+	&& mkdir -p /tmp/build/build && cd /tmp/build
+
+RUN cd /tmp/build/build \
+	&& git clone https://github.com/ADGrant/json.git \
+	&& cmake json \
+	&& make install
+
+RUN curl -sSL https://github.com/aws/aws-sdk-cpp/archive/${AWS_SDK_CPP_VERSION}.zip > aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
 	&& unzip aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
 	&& rm -f aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
 	&& cd /tmp/build/build \
@@ -83,7 +92,6 @@ RUN apt-get update \
 		../aws-sdk-cpp-${AWS_SDK_CPP_VERSION} \
 	&& make \
 	&& make install \
-	&& make clean \
 	&& cd / \
 	&& rm -rf /tmp/build \
 	&& rm -rf /var/lib/apt/lists/* 
