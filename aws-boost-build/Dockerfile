@@ -92,6 +92,7 @@ RUN cd /tmp/build/aws \
 		aws-sdk-cpp-${AWS_SDK_CPP_VERSION} \
 	&& make \
 	&& make install 
-#	&& cd / \
-#	&& rm -rf /tmp/build \
-#	&& rm -rf /var/lib/apt/lists/* 
+
+RUN cd / \
+	&& rm -rf /tmp/build \
+	&& rm -rf /var/lib/apt/lists/* 
