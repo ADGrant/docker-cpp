@@ -72,26 +72,26 @@ RUN curl -sSL https://cmake.org/files/v${CMAKE_VER}/cmake-${CMAKE_VERSION}-Linux
 	&& cp -rp bin/* /usr/local/bin/ \
 	&& cp -rp share/* /usr/local/share/ \
 	&& cd / && rm -rf /tmp/build \
-	&& mkdir -p /tmp/build/build && cd /tmp/build
+	&& mkdir -p /tmp/build/json && mkdir -p /tmp/build/aws && cd /tmp/build
 
-RUN cd /tmp/build/build \
+RUN cd /tmp/build/json \
 	&& git clone https://github.com/ADGrant/json.git \
 	&& cmake json \
 	&& make install
 
-RUN curl -sSL https://github.com/aws/aws-sdk-cpp/archive/${AWS_SDK_CPP_VERSION}.zip > aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
+RUN cd /tmp/build/aws \
+	&& curl -sSL https://github.com/aws/aws-sdk-cpp/archive/${AWS_SDK_CPP_VERSION}.zip > aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
 	&& unzip aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
 	&& rm -f aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
-	&& cd /tmp/build/build \
 	&& cmake \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DENABLE_TESTING=OFF \
 		-DAUTORUN_UNIT_TESTS=OFF \
 		-DBUILD_SHARED_LIBS=OFF \
 		-DENABLE_UNITY_BUILD=${ENABLE_UNITY_BUILD} \
-		../aws-sdk-cpp-${AWS_SDK_CPP_VERSION} \
+		aws-sdk-cpp-${AWS_SDK_CPP_VERSION} \
 	&& make \
-	&& make install \
-	&& cd / \
-	&& rm -rf /tmp/build \
-	&& rm -rf /var/lib/apt/lists/* 
+	&& make install 
+#	&& cd / \
+#	&& rm -rf /tmp/build \
+#	&& rm -rf /var/lib/apt/lists/* 
