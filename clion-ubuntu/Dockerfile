@@ -22,4 +22,11 @@ RUN apt-get update \
       tar \
       python \
       python-dev \
+      git \
+      curl \
+      tcsh \
+      pkg-config \
+      zip \
   && apt-get clean
+
+RUN mkdir /vcpkg && cd /vcpkg && git clone https://github.com/Microsoft/vcpkg.git && ./vcpkg/bootstrap-vcpkg.sh
