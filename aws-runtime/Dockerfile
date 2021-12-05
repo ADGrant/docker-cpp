@@ -16,5 +16,3 @@ RUN apt-get update
 RUN apt-get install -y \
 	$AWS_SDK_CPP_REQUIRED_LIBS \
 	--no-install-recommends 
-
-RUN apt-get install -y libpulse-dev
