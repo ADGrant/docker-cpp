@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 as AWS_CPP_RUNTIME
+FROM ubuntu:21.04 as AWS_CPP_RUNTIME
 
 # These libs are required by the AWS C++ SDK Or Boost and should remain inside
 # of any child container using this image as a base image.
