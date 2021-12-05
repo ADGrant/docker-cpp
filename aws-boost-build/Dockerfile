@@ -52,7 +52,7 @@ RUN mkdir -p /tmp/build && cd /tmp/build
 
 
 RUN mkdir -p /tmp/build/json && mkdir -p /tmp/build/aws && cd /tmp/build \
-	cd /tmp/build/json \
+	&& cd /tmp/build/json \
 	&& git clone https://github.com/ADGrant/json.git \
 	&& cmake json \
 	&& make install
@@ -60,15 +60,20 @@ RUN mkdir -p /tmp/build/json && mkdir -p /tmp/build/aws && cd /tmp/build \
 RUN cd /tmp/build/aws \
 	&& curl -sSL https://github.com/aws/aws-sdk-cpp/archive/${AWS_SDK_CPP_VERSION}.zip > aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
 	&& unzip aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
-	&& rm -f aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
+	&& rm -f aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip 
+
+RUN cd /tmp/build/aws \
 	&& cmake \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DENABLE_TESTING=OFF \
 		-DAUTORUN_UNIT_TESTS=OFF \
 		-DBUILD_SHARED_LIBS=ON \
 		-DENABLE_UNITY_BUILD=${ENABLE_UNITY_BUILD} \
-		aws-sdk-cpp-${AWS_SDK_CPP_VERSION} \
-	&& make \
+		aws-sdk-cpp-${AWS_SDK_CPP_VERSION} 
+
+RUN cd /tmp/build/aws \
+	&& make 
+RUN cd /tmp/build/aws \
 	&& make install 
 
 RUN cd / \
