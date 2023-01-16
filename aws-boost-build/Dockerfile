@@ -1,4 +1,4 @@
-FROM andrewdgrant/clion-ubuntu:1.1.0 as AWS_CPP_SDK
+FROM andrewdgrant/clion-ubuntu:1.2.0 as AWS_CPP_SDK
 
 ARG AWS_SDK_CPP_VER_MAJOR
 ENV AWS_SDK_CPP_VER_MAJOR ${AWS_SDK_CPP_VER_MAJOR:-1}
@@ -6,8 +6,6 @@ ARG AWS_SDK_CPP_VER_MINOR
 ENV AWS_SDK_CPP_VER_MINOR ${AWS_SDK_CPP_VER_MINOR:-3}
 ARG AWS_SDK_CPP_VER_PATCH
 ENV AWS_SDK_CPP_VER_PATCH ${AWS_SDK_CPP_VER_PATCH:-47}
-
-ENV AWS_SDK_CPP_VERSION="1.8.160"
 
 ENV CMAKE_VER_MAJOR 3
 ENV CMAKE_VER_MINOR 17
@@ -58,9 +56,9 @@ RUN mkdir -p /tmp/build/json && mkdir -p /tmp/build/aws && cd /tmp/build \
 	&& make install
 
 RUN cd /tmp/build/aws \
-	&& curl -sSL https://github.com/aws/aws-sdk-cpp/archive/${AWS_SDK_CPP_VERSION}.zip > aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
-	&& unzip aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip \
-	&& rm -f aws-sdk-cpp-${AWS_SDK_CPP_VERSION}.zip 
+	&& git clone https://github.com/aws/aws-sdk-cpp.git \
+	&& cd /tmp/build/aws/aws-sdk-cpp \
+	&& git submodule update --init --recursive
 
 RUN cd /tmp/build/aws \
 	&& cmake \
@@ -69,7 +67,7 @@ RUN cd /tmp/build/aws \
 		-DAUTORUN_UNIT_TESTS=OFF \
 		-DBUILD_SHARED_LIBS=ON \
 		-DENABLE_UNITY_BUILD=${ENABLE_UNITY_BUILD} \
-		aws-sdk-cpp-${AWS_SDK_CPP_VERSION} 
+		aws-sdk-cpp
 
 RUN cd /tmp/build/aws \
 	&& make 
