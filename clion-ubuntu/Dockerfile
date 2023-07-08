@@ -1,7 +1,7 @@
 # Build and run:
 #   docker build -t clion/ubuntu/cpp-env:1.0 -f Dockerfile.cpp-env-ubuntu .
 
-FROM ubuntu:22.04
+FROM ubuntu:23.04
 
 RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
 
