@@ -1,7 +1,7 @@
 # Build and run:
 #   docker build -t clion/ubuntu/cpp-env:1.0 -f Dockerfile.cpp-env-ubuntu .
 
-FROM ubuntu:23.10
+FROM ubuntu:24.10
 
 RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
 
@@ -27,4 +27,6 @@ RUN apt-get update \
     zip \
     && apt-get clean
 
-RUN mkdir /vcpkg && cd /vcpkg && git clone https://github.com/Microsoft/vcpkg.git && ./vcpkg/bootstrap-vcpkg.sh
+USER 1000:1000
+ENV HOME=/home/ubuntu
+RUN cd /home/ubuntu && git clone https://github.com/Microsoft/vcpkg.git && ./vcpkg/bootstrap-vcpkg.sh
